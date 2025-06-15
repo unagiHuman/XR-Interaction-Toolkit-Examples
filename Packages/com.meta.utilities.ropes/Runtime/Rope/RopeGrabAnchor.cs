@@ -14,6 +14,7 @@ namespace Meta.Utilities.Ropes
         [SerializeField, AutoSet] protected Rigidbody m_body;
         [SerializeField] protected Vector3 m_gripAxis;
         [SerializeField] protected float m_gripWidth;
+        [SerializeField] private bool isDebugNotFollow = false;
         protected Quaternion m_handRotationOffset;
 
         protected void Awake()
@@ -75,6 +76,8 @@ namespace Meta.Utilities.Ropes
             else
             {
                 m_body.isKinematic = true;
+                if (isDebugNotFollow) return;
+                
                 transform.position = m_ropeSystem.RopeSimulation.ClosestPointOnRope(Hand.transform.position);
                 transform.rotation = Hand.transform.rotation * Quaternion.Inverse(m_handRotationOffset);
             }
