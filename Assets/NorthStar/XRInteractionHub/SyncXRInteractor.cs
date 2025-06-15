@@ -17,7 +17,8 @@ namespace NorthStar.XRInteractionHub
         [SerializeField] PhysicsRopeGrabAnchor anchor;
         
         [SerializeField] PhysicsTransformer physicsTransformer;
-
+        
+        private Rigidbody rigidbody;
 
         private void Awake()
         {
@@ -37,19 +38,24 @@ namespace NorthStar.XRInteractionHub
                 {
                     Release();
                 }));
-            var rigidbody = GetComponent<Rigidbody>();
-            rigidbody.isKinematic = true;
-            rigidbody.useGravity = false;
-            
+            this.rigidbody = GetComponent<Rigidbody>();
+            this.rigidbody.isKinematic = true;
+            this.rigidbody.useGravity = false;
+            var wait = new WaitForFixedUpdate();
             while (true)
             {
-                rigidbody.transform.SetPositionAndRotation(syncGroup.transform.position, syncGroup.transform.rotation);
-                yield return null;
+                var diffpos = this.rigidbody.transform.position - syncGroup.transform.position;
+                //this.rigidbody.linearVelocity = diffpos / Time.fixedDeltaTime;
+                this.rigidbody.MovePosition(this.syncGroup.transform.position);
+                this.rigidbody.MoveRotation(this.syncGroup.transform.rotation);
+              //  this.rigidbody.transform.SetPositionAndRotation(syncGroup.transform.position, syncGroup.transform.rotation);
+                yield return wait;
             }
         }
         
         private void Grab()
         {
+            rigidbody.isKinematic = false;
             // PhysicsTransformerのAddInteractorを呼び出してグラブを開始します。
             // 第1引数: インタラクター（この手オブジェクト）
             // 第2引数: インタラクタブル（掴まれるオブジェクト）
@@ -60,6 +66,7 @@ namespace NorthStar.XRInteractionHub
 
         private void Release()
         {
+            this.rigidbody.isKinematic = true;
             // PhysicsTransformerのRemoveInteractorを呼び出してグラブを終了します。
             physicsTransformer.RemoveInteractor(this.gameObject);
 
