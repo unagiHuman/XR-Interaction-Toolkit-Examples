@@ -51,6 +51,18 @@ namespace Meta.Utilities.Ropes
             public bool Fixed;
             public bool HasCollision;
             public Rigidbody PinToRigidbody;
+            
+            /// <summary>
+            /// このアンカーにかかっている現在の張力の強さ（読み取り専用）。
+            /// </summary>
+            public float CurrentTensionForce;
+
+
+
+            /// <summary>
+            /// このアンカーがロープの長さの限界によって移動を制限されているかどうか（読み取り専用）。
+            /// </summary>
+            public bool IsLimitedByTension;
 
             [NonSerialized] public bool UseExistingObject;
             [NonSerialized] public GameObject GameObject;
@@ -201,6 +213,8 @@ namespace Meta.Utilities.Ropes
 
         [SerializeField] protected RopeGrabAnchor[] m_grabAnchors;
 
+        [SerializeField] protected bool m_initInStart = true;
+
         #region Events
 
         [Space]                     //Dylan - Changed these events to public so that the narrative system can interface with them
@@ -233,6 +247,8 @@ namespace Meta.Utilities.Ropes
         [Tooltip("Triggered when the rope a rope is bent around a corner")]
         [SerializeField] private UnityEvent m_onRopeBendCreated;
 
+        
+
         #endregion
 
         #region Private Fields
@@ -256,15 +272,20 @@ namespace Meta.Utilities.Ropes
 
         private void Start()
         {
+            
             m_lineRenderer = GetComponent<LineRenderer>();
 
-            var i = 0;
-            foreach (var anchor in m_anchors)
+            if(m_initInStart)
             {
-                SetupAnchor(anchor);
-                i++;
+                var i = 0;
+                foreach (var anchor in m_anchors)
+                {
+                    SetupAnchor(anchor);
+                    i++;
+                }
+                SetupConstraints();
             }
-            SetupConstraints();
+           
 
             var test = new GameObject("DummyCapsule");
             test.transform.parent = transform;
@@ -275,12 +296,64 @@ namespace Meta.Utilities.Ropes
             m_dummySphere = test.AddComponent<SphereCollider>();
             m_dummySphere.enabled = false;
 
+            if(m_initInStart)
+            {
+                m_tubeRenderer.ResizeTube(m_ropeSimulation.NodeCount);
+
+                SetupHandRefs();
+
+                var nodeDistance = m_totalLength / m_ropeSimulation.NodeCount;
+                m_ropeSimulation.NodeDistance = nodeDistance * m_nodeDistanceMultiplier;
+            }
+            
+        }
+
+        public void SetRopeLength(float totalLength)
+        {
+            m_totalLength = totalLength;
+            this.m_ropeSimulation.SetUpRope((int)(totalLength/0.5f));
+        }
+
+        public void InitRopeSettings()
+        {
+            var i = 0;
+            foreach (var anchor in m_anchors)
+            {
+                SetupAnchor(anchor);
+                i++;
+            }
+            SetupConstraints();
             m_tubeRenderer.ResizeTube(m_ropeSimulation.NodeCount);
-
-            SetupHandRefs();
-
             var nodeDistance = m_totalLength / m_ropeSimulation.NodeCount;
             m_ropeSimulation.NodeDistance = nodeDistance * m_nodeDistanceMultiplier;
+        }
+        
+        /// <summary>
+        /// 特定のアンカーにかかっている現在の張力の大きさを取得します。
+        /// </summary>
+        /// <param name="anchor">状態を確認したいAnchorオブジェクト</param>
+        /// <returns>張力の大きさ</returns>
+        public float GetAnchorTensionForce(Anchor anchor)
+        {
+
+            if (anchor != null && m_anchors.Contains(anchor))
+            {
+                return anchor.CurrentTensionForce;
+            }
+            return 0f;
+        }
+        
+        public bool IsAnchorLimitedByTension(Anchor anchor)
+        {
+
+            if (anchor != null && m_anchors.Contains(anchor))
+
+            {
+
+                return anchor.IsLimitedByTension;
+
+            }
+            return false;
         }
 
         /// <summary>
@@ -427,7 +500,7 @@ namespace Meta.Utilities.Ropes
             m_ropeSimulation.UpdateRenderer();
         }
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             m_ropeSimulation.enabled = true;
             m_tubeRenderer.enabled = true;
@@ -1001,6 +1074,8 @@ namespace Meta.Utilities.Ropes
                         {
                             var dir = transform.TransformDirection(nextAnchor.Position - anchor.Position).normalized;
                             var force = -Vector3.Dot(anchor.Constraint.currentForce, dir);
+                            
+                           
 
                             // Additional force for when anchor sits between two constraints
                             if (nextAnchor.Constraint is not null)
@@ -1012,6 +1087,11 @@ namespace Meta.Utilities.Ropes
                                     force -= Vector3.Dot(nextAnchor.Constraint.currentForce, -dir2);
                                 }
                             }
+                            
+                            // 計算した張力をプロパティに保存
+                            //anchor.CurrentTensionForce = Mathf.Abs(force);
+                            // 張力が閾値を超えているか判定し、フラグを更新
+                           // anchor.IsLimitedByTension = anchor.CurrentTensionForce > m_slipForce;
 
                             // Slipping logic:
                             // When enough force (resistence to pulling the rope) is encountered, resolve in this order
@@ -1089,7 +1169,11 @@ namespace Meta.Utilities.Ropes
                                 }
                             }
                         }
-
+                        else
+                        {
+                            anchor.CurrentTensionForce = 0;
+                            anchor.IsLimitedByTension = false;
+                        }
                         break;
                 }
 

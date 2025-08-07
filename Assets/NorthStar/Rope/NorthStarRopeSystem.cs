@@ -4,7 +4,7 @@ using Meta.Utilities.Ropes;
 
 namespace NorthStar
 {
-    public class NorthStarRopeSystem : RopeSystem
+    public class NorthStarRopeSystem : RopeSystemWrapper
     {
         protected BodyPositions m_bodyPositions;
 

@@ -13,13 +13,11 @@ namespace NorthStar
     public class PhysicalHand : MonoBehaviour
     {
         [SerializeField] private Transform m_handAnchor;
-        [SerializeField] protected HumanBodyBones m_bone;
         [SerializeField] private bool m_boundToParent;
         [SerializeField] private Rigidbody m_parent;
         private Vector3 m_lastBodyPosition;
         [SerializeField, Interface(typeof(IHand))] private Object m_handObject;
-        private IHand m_hand;
-
+       
         public HandColliders Colliders { get; private set; }
 
         public float LocalMovementStrengthModifier = 1;
@@ -44,20 +42,17 @@ namespace NorthStar
             m_joint = GetComponent<ConfigurableJoint>();
             m_rotationJoint = GetComponent<ConfigurableJoint>();// = transform.GetChild(0).GetComponent<ConfigurableJoint>();
             Colliders = GetComponent<HandColliders>();
-            m_hand = m_handObject as IHand;
             Rigidbody = GetComponent<Rigidbody>();
             WristBody = m_rotationJoint.GetComponent<Rigidbody>();
         }
 
         private bool GetHandEnabled()
         {
-            return m_hand.IsConnected && m_hand.IsHighConfidence && m_hand.IsTrackedDataValid;
+            return true;
         }
 
         private void OnHandConnected()
         {
-            m_connected = true;
-            Colliders.enabled = true;
             Rigidbody.position = m_handAnchor.position;
             Rigidbody.rotation = m_handAnchor.rotation;
             Rigidbody.isKinematic = false;
@@ -65,8 +60,6 @@ namespace NorthStar
 
         private void OnHandDisconnected()
         {
-            m_connected = false;
-            Colliders.enabled = false;
             Rigidbody.isKinematic = true;
         }
 
@@ -108,6 +101,7 @@ namespace NorthStar
         }
         private void Update()
         {
+            /*
             if ((!GlobalSettings.PlayerSettings.HandsReleaseOnInvalidPosition) || BodyPositions.Instance.IsHandWithinLimits(m_bone))
             {
                 m_breakTimer -= Time.deltaTime;
@@ -116,6 +110,9 @@ namespace NorthStar
             {
                 m_breakTimer += Time.deltaTime;
             }
+            */
+            
+            m_breakTimer += Time.deltaTime;
             m_breakTimer = Mathf.Clamp(m_breakTimer, 0.0f, GlobalSettings.PlayerSettings.HandBreakTimeout + ExcessBreakTimer);
             m_interactor.enabled = m_breakTimer < GlobalSettings.PlayerSettings.HandBreakTimeout + ExcessBreakTimer && m_connected;
             if (!GetHandEnabled())

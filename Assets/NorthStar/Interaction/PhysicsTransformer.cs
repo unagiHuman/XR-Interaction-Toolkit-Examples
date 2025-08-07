@@ -1,6 +1,7 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 using System.Collections.Generic;
 using Meta.Utilities;
+using Meta.Utilities.Ropes;
 using Oculus.Interaction;
 using Oculus.Interaction.HandGrab;
 using UnityEngine;
@@ -28,10 +29,9 @@ namespace NorthStar
 
         private Dictionary<GameObject, JointState> m_joints = new();
         private List<Vector3> m_velocityHistory;
-
-        public delegate void InteractionCallBack(GameObject interactor);
-        public InteractionCallBack OnInteraction;
-        public InteractionCallBack OnEndInteraction;
+        
+        public System.Func<GameObject, RopeSystem.Anchor>  OnInteraction;
+        public System.Func<GameObject, RopeSystem.Anchor>  OnEndInteraction;
 
         private class JointState
         {
@@ -44,22 +44,14 @@ namespace NorthStar
 
         private void Awake()
         {
-           // m_interactables = GetComponentsInChildren<HandGrabInteractable>();
             m_velocityHistory = new(m_velocityHistoryCapacity);
-            /*
-            foreach (var interactable in m_interactables)
-            {
-                interactable.WhenSelectingInteractorAdded.Action += (HandGrabInteractor i) => AddInteractor(i, interactable);
-                interactable.WhenSelectingInteractorRemoved.Action += RemoveInteractor;
-            }
-            */
         }
 
-        public void AddInteractor(GameObject interactor, GameObject interactable)
+        public RopeSystem.Anchor AddInteractor(GameObject interactor, GameObject interactable)
         {
             Debug.Log(interactable.gameObject.name, interactable.gameObject);
             if (m_joints.ContainsKey(interactor))
-                return;
+                return null;
 
             var joint = gameObject.AddComponent<ConfigurableJoint>();
 
@@ -92,7 +84,7 @@ namespace NorthStar
                 }
             }
             m_joints.Add(interactor, jointState);
-            OnInteraction?.Invoke(interactor);
+            return OnInteraction?.Invoke(interactor);
         }
 
         private void Update()

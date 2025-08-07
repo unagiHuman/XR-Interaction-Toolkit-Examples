@@ -1,8 +1,10 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 using Meta.Utilities;
+using Meta.Utilities.Ropes;
 using Oculus.Interaction.HandGrab;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.XR.OpenXR.Features.Extensions.PerformanceSettings;
 
 namespace NorthStar
 {
@@ -28,14 +30,16 @@ namespace NorthStar
             m_physicsTransformer.OnEndInteraction -= EndGrab;
         }
 
-        private void EndGrab(GameObject interactor)
+        private RopeSystem.Anchor EndGrab(GameObject interactor)
         {
             OnRelease.Invoke();
+            return null;
         }
 
-        private void Grab(GameObject interactor)
+        private RopeSystem.Anchor Grab(GameObject interactor)
         {
             OnGrab.Invoke();
+            return null;
         }
     }
 }

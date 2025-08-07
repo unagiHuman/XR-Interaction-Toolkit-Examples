@@ -36,15 +36,16 @@ namespace NorthStar
             m_hand = m_leftHand ? BodyPositions.GetLeftHand() : BodyPositions.GetRightHand();
         }
 
-        private void EndGrab(GameObject interactor)
+        private RopeSystem.Anchor EndGrab(GameObject interactor)
         {
-            if (!m_grabing) return; m_grabing = false;
+            if (!m_grabing) return null; m_grabing = false;
             m_rope.Binds[BindingPointIndex] = new();
+            return null;
         }
 
-        private void Grab(GameObject interactor)
+        private RopeSystem.Anchor Grab(GameObject interactor)
         {
-            if (m_grabing) return; m_grabing = true;
+            if (m_grabing) return null; m_grabing = true;
             TargetIndex = m_rope.ClosestIndexToPoint(transform.position);
             var binding = new BindingPoint()
             {
@@ -54,7 +55,7 @@ namespace NorthStar
             };
 
             m_rope.Binds[BindingPointIndex] = binding;
-
+            return null;
         }
 
         private void Update()

@@ -125,6 +125,8 @@ namespace Meta.Utilities.Ropes
 
         [SerializeField, AutoSet] private TubeRenderer m_renderer;
 
+        [SerializeField] private bool m_isSetUpOnAwake = true;
+
         #region Constants
 
         private const int MAXCOLLISIONS = 128;
@@ -154,7 +156,13 @@ namespace Meta.Utilities.Ropes
             m_collider.enabled = false;
             m_collider.center = Vector3.zero;
             WarmupSubstepsRemaining = m_warmupSubsteps;
+            
+            if(m_isSetUpOnAwake)  Setup();
+        }
 
+        public void SetUpRope(int nodeCount)
+        {
+            this.m_nodeCount = nodeCount;
             Setup();
         }
 
