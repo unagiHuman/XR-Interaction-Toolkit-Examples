@@ -50,6 +50,7 @@ namespace NorthStar
             Colliders = GetComponent<HandColliders>();
             Rigidbody = GetComponent<Rigidbody>();
             WristBody = m_rotationJoint.GetComponent<Rigidbody>();
+            if (DampendSpringJoint == null) this.gameObject.AddComponent<CriticallyDampendSpringJoint>();
         }
 
         private bool GetHandEnabled()

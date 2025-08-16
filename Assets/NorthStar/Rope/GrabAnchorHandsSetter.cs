@@ -10,6 +10,8 @@ namespace NorthStar
         [Header("Grab Anchors")]
         [SerializeField] private PhysicsRopeGrabAnchor m_grabLeftAnchor;
         [SerializeField] private PhysicsRopeGrabAnchor m_grabRightAnchor;
+        [SerializeField] private PhysicalHandRef m_leftHandRef;
+        [SerializeField] private PhysicalHandRef m_rightHandRef;
         
         /// <summary>
         /// 左右のHandTransformを対応するAnchorにセットする
@@ -27,6 +29,12 @@ namespace NorthStar
             {
                 m_grabRightAnchor.Hand = rightHand;
             }
+        }
+        
+        public void SetBothPhysicalHand(PhysicalHand leftHand, PhysicalHand rightHand)
+        {
+            m_leftHandRef.SetHand(leftHand);
+            m_rightHandRef.SetHand(rightHand);
         }
     }
 }

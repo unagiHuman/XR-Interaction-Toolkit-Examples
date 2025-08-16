@@ -11,6 +11,11 @@ namespace XRInteractionNorthStar
         [SerializeField] private RopeInitMessageReceiver ropeInitMessageReceiver;
       //  [SerializeField] private GrabAnchorHandsSetter grabAnchorHandsSetter;
         [SerializeField] private CachedHandTransformGetter cachedHandTransformGetter;
+
+        [SerializeField] private PhysicalHand rightHand;
+        
+        [SerializeField] private PhysicalHand leftHand;
+        
         private void Awake()
         {
             ropeInitMessageReceiver.OnCreateRopeEvent.AddListener(OnInitRope);
@@ -23,6 +28,7 @@ namespace XRInteractionNorthStar
             var left = cachedHandTransformGetter.LeftHandTransform;
             var right = cachedHandTransformGetter.RightHandTransform;
             grabAnchorHandsSetter.SetBothHandTransforms(left,right);
+            grabAnchorHandsSetter.SetBothPhysicalHand(this.leftHand, this.rightHand);
         }
 
         private void OnDestroy()

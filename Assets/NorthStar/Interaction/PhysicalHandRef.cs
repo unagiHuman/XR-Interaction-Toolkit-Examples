@@ -10,5 +10,10 @@ namespace NorthStar
     {
         [SerializeField] private PhysicalHand m_hand;
         public PhysicalHand Hand => m_hand;
+
+        public void SetHand(PhysicalHand hand)
+        {
+            this.m_hand = hand;
+        }
     }
 }

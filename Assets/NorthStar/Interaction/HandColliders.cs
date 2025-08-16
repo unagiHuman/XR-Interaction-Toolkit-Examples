@@ -1,67 +1,89 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace NorthStar
 {
     /// <summary>
-    /// Script to automate placing colliders on the hand
+    /// 手階層下の全ての Collider をキャッシュし、
+    /// 本コンポーネントの有効/無効に合わせて一括で有効化/無効化するユーティリティ。
+    /// 生成や配置は行いません（ビルダー機能なし）。
     /// </summary>
     public class HandColliders : MonoBehaviour
     {
-        [SerializeField] private float m_colliderRadius;
-        [SerializeField] private List<Transform> m_fingerRoots = new();
-        [SerializeField] private Transform m_wrist;
-        [SerializeField] private PhysicsMaterial m_physicMaterial;
-        private List<CapsuleCollider> m_fingerColliders = new();
+        [SerializeField, Tooltip("キャッシュ時に非アクティブの子も含める")]
+        private bool m_includeInactive = true;
 
-        public enum Direction { x, y, z }
-        [SerializeField] private Direction m_direction;
+        [SerializeField, Tooltip("自身に付いている Collider も含める")]
+        private bool m_includeSelf = true;
 
-        // Start is called before the first frame update
+        [SerializeField, Tooltip("現在キャッシュしているコライダー一覧（参照用）")]
+        private List<Collider> m_cachedColliders = new();
+
+        /// <summary>
+        /// 手動でキャッシュを更新します。階層構成が変わった際に呼び出してください。
+        /// </summary>
+        public void RefreshCache()
+        {
+            m_cachedColliders.Clear();
+
+            // 自身を含めて階層下の全 Collider を収集
+            var all = GetComponentsInChildren<Collider>(m_includeInactive);
+            if (all != null && all.Length > 0)
+            {
+                for (int i = 0; i < all.Length; i++)
+                {
+                    var c = all[i];
+                    if (c == null) continue;
+                    if (!m_includeSelf && c.transform == transform) continue;
+                    m_cachedColliders.Add(c);
+                }
+            }
+
+            RemoveNulls();
+        }
+
         private void Awake()
         {
-            foreach (var finger in m_fingerRoots)
-            {
-                BuildFinger(finger);
-                BuildFingerBone(m_wrist, finger);
-            }
+            RefreshCache();
+        }
+
+        // 子の増減・親子変更時に自動でキャッシュを更新
+        private void OnTransformChildrenChanged()
+        {
+            RefreshCache();
         }
 
         private void OnEnable()
         {
-            foreach (Collider collider in m_fingerColliders)
+            if (m_cachedColliders == null || m_cachedColliders.Count == 0)
+                RefreshCache();
+
+            for (int i = 0; i < m_cachedColliders.Count; i++)
             {
-                collider.enabled = true;
+                var c = m_cachedColliders[i];
+                if (!c) continue;
+                c.enabled = true;
             }
         }
+
         private void OnDisable()
         {
-            foreach (Collider collider in m_fingerColliders)
+            for (int i = 0; i < m_cachedColliders.Count; i++)
             {
-                collider.enabled = false;
+                var c = m_cachedColliders[i];
+                if (!c) continue;
+                c.enabled = false;
             }
         }
 
-        private void BuildFingerBone(Transform root, Transform next)
+        private void RemoveNulls()
         {
-            var collider = root.gameObject.AddComponent<CapsuleCollider>();
-            collider.direction = (int)m_direction;
-            collider.height = next.localPosition.magnitude;
-            collider.center = next.localPosition / 2;
-            collider.radius = m_colliderRadius;
-            collider.material = m_physicMaterial;
-            m_fingerColliders.Add(collider);
-        }
-
-        private void BuildFinger(Transform root)
-        {
-            while (root.childCount > 0)
+            for (int i = m_cachedColliders.Count - 1; i >= 0; i--)
             {
-                var child = root.GetChild(0);
-                BuildFingerBone(root, child);
-                root = child;
+                if (!m_cachedColliders[i])
+                    m_cachedColliders.RemoveAt(i);
             }
         }
-
     }
 }
