@@ -126,8 +126,8 @@ namespace Meta.Utilities.Ropes
 
             if (Grabbed)
             {
-                //m_anchor.BindAxis = m_ropeSystem.transform.InverseTransformDirection(m_invertedGrip ? -WorldBindAxis : WorldBindAxis);
-                //m_anchor.BindDistance = m_gripWidth / m_ropeSystem.TotalLength;
+                m_anchor.BindAxis = m_ropeSystem.transform.InverseTransformDirection(m_invertedGrip ? -WorldBindAxis : WorldBindAxis);
+                m_anchor.BindDistance = m_gripWidth / m_ropeSystem.TotalLength;
                 m_body.isKinematic = false;
             }
             else

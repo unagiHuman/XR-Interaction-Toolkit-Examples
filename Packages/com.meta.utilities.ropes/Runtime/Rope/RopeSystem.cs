@@ -68,7 +68,7 @@ namespace Meta.Utilities.Ropes
             [NonSerialized] public GameObject GameObject;
             [NonSerialized] public Rigidbody Rigidbody;
             [NonSerialized] public SphereCollider Collider;
-            [NonSerialized] public ConfigurableJoint Constraint;
+            public ConfigurableJoint Constraint;
 
             public int RopeBindIndex;
             public float BindDistance;

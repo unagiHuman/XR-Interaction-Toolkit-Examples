@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using Meta.Utilities.Ropes;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -14,11 +15,16 @@ namespace NorthStar.XRInteractionHub
         
         public XRBaseInteractable SyncGroup => syncGroup;
         
+        public float LocalMovementStrengthModifier = 1;
+        public float LocalRotationStrengthModifier = 1;
+        
         [SerializeField] private XRBaseInteractable syncGroup;
         
         [SerializeField] PhysicsRopeGrabAnchor anchor;
         
         [SerializeField] PhysicsTransformer physicsTransformer;
+
+        [SerializeField] private CriticallyDampendSpringJoint criticallyDampendSpringJoint;
         
         private Rigidbody rigidbody;
         
@@ -42,34 +48,29 @@ namespace NorthStar.XRInteractionHub
             this.rigidbody = GetComponent<Rigidbody>();
             this.rigidbody.isKinematic = true;
             this.rigidbody.useGravity = false;
-            var wait = new WaitForFixedUpdate();
-            while (true)
+            yield return null;
+        }
+
+        private void FixedUpdate()
+        {
+            UpdateDrive();
+            if (this.ropeGrabAnchor != null)
             {
-                if (this.ropeGrabAnchor != null)
+                if (this.ropeGrabAnchor.IsLimitedByTension)
                 {
-                    if (this.ropeGrabAnchor.IsLimitedByTension)
-                    {
-                        this.rigidbody.MovePosition(this.syncGroup.transform.position);
-                        this.rigidbody.MoveRotation(this.syncGroup.transform.rotation); 
-                       
-                    }
-                    else
-                    {
-                        this.rigidbody.MovePosition(this.interactor.transform.position);
-                        this.rigidbody.MoveRotation(this.interactor.transform.rotation); 
-                    }
-                   
+                    SyncPositions(this.syncGroup.transform.position, this.syncGroup.transform.rotation);
                 }
                 else
                 {
-                    this.rigidbody.MovePosition(this.syncGroup.transform.position);
-                    this.rigidbody.MoveRotation(this.syncGroup.transform.rotation); 
+                    SyncPositions(this.interactor.transform.position, this.interactor.transform.rotation);
                 }
-                
-                yield return wait;
+            }
+            else
+            {
+                SyncPositions(this.syncGroup.transform.position, this.syncGroup.transform.rotation);
             }
         }
-        
+
         private void Grab(IXRSelectInteractor interactor)
         {
             this.interactor = interactor;
@@ -90,6 +91,27 @@ namespace NorthStar.XRInteractionHub
             physicsTransformer.RemoveInteractor(this.gameObject);
             this.ropeGrabAnchor = null;
             Debug.Log($"'{physicsTransformer.name}' を解放しました。");
+        }
+        
+        private void SyncPositions(Vector3 targetPosition, Quaternion targetRotation)
+        {
+            criticallyDampendSpringJoint.TargetPoint = targetPosition;
+            criticallyDampendSpringJoint.TargetRotation = targetRotation;
+            
+            if (GlobalSettings.PlayerSettings.MaxHandDistance != float.PositiveInfinity &&
+                Vector3.Distance(transform.position, targetPosition) > GlobalSettings.PlayerSettings.MaxHandDistance)
+            {
+                this.rigidbody.position =targetPosition;
+                transform.position = this.rigidbody.position;
+            }
+
+            criticallyDampendSpringJoint.AddForce();
+        }
+        
+        private void UpdateDrive()
+        {
+            criticallyDampendSpringJoint.PositionSpring = LocalMovementStrengthModifier;
+            criticallyDampendSpringJoint.RotationSpring = LocalRotationStrengthModifier;
         }
     }
 }
