@@ -363,6 +363,8 @@ GameObject:
   - component: {fileID: 574265614916764673}
   - component: {fileID: 607836110698622366}
   - component: {fileID: 2700653575224073084}
+  - component: {fileID: 7465462912361000647}
+  - component: {fileID: 5909713129858405121}
   m_Layer: 8
   m_Name: LeftHandSync
   m_TagString: Untagged
@@ -424,9 +426,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d45e73e86ba4e09856e2e81ca6f1b50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NorthStar.XRInteractionHub.SyncXRInteractor
+  LocalMovementStrengthModifier: 1
+  LocalRotationStrengthModifier: 1
   syncGroup: {fileID: 6787087192815081324}
   anchor: {fileID: 230674045712953838}
   physicsTransformer: {fileID: 8314915406007673575}
+  criticallyDampendSpringJoint: {fileID: 5909713129858405121}
+--- !u!114 &7465462912361000647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2360723941944846252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4e300344d580fd48809a8d16ca90d6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NorthStar.PhysicalHandRef
+  m_hand: {fileID: 0}
+--- !u!114 &5909713129858405121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2360723941944846252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22d48fa2d74b2da4ab6e94c7dd442aa8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NorthStar.CriticallyDampendSpringJoint
+  m_body: {fileID: 607836110698622366}
+  PositionSpring: 0
+  PositionDamping: 0
+  RotationSpring: 0
+  RotationDamping: 0
+  MaxVelocity: 0
+  MaxForce: Infinity
+  MaxAngularAcceleration: Infinity
+  TargetPoint: {x: 0, y: 0, z: 0}
+  TargetRotation: {x: 0, y: 0, z: 0, w: 1}
 --- !u!1 &2686149252190619840
 GameObject:
   m_ObjectHideFlags: 0
@@ -885,6 +925,8 @@ GameObject:
   - component: {fileID: 1231463714651252124}
   - component: {fileID: 7625209581592406129}
   - component: {fileID: 5317606697331953022}
+  - component: {fileID: 5436287890974554919}
+  - component: {fileID: 277716746247688865}
   m_Layer: 8
   m_Name: RightHandSync
   m_TagString: Untagged
@@ -946,9 +988,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d45e73e86ba4e09856e2e81ca6f1b50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NorthStar.XRInteractionHub.SyncXRInteractor
+  LocalMovementStrengthModifier: 1
+  LocalRotationStrengthModifier: 1
   syncGroup: {fileID: 5026698517848804690}
   anchor: {fileID: 1407665698867900537}
   physicsTransformer: {fileID: 3910556922856241352}
+  criticallyDampendSpringJoint: {fileID: 277716746247688865}
+--- !u!114 &5436287890974554919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5134095742820751812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4e300344d580fd48809a8d16ca90d6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NorthStar.PhysicalHandRef
+  m_hand: {fileID: 0}
+--- !u!114 &277716746247688865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5134095742820751812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22d48fa2d74b2da4ab6e94c7dd442aa8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NorthStar.CriticallyDampendSpringJoint
+  m_body: {fileID: 7625209581592406129}
+  PositionSpring: 0
+  PositionDamping: 0
+  RotationSpring: 0
+  RotationDamping: 0
+  MaxVelocity: 0
+  MaxForce: Infinity
+  MaxAngularAcceleration: Infinity
+  TargetPoint: {x: 0, y: 0, z: 0}
+  TargetRotation: {x: 0, y: 0, z: 0, w: 1}
 --- !u!1 &5324139042374652325
 GameObject:
   m_ObjectHideFlags: 0
@@ -2154,6 +2234,9 @@ MonoBehaviour:
     Fixed: 0
     HasCollision: 1
     PinToRigidbody: {fileID: 7465981355611449232}
+    CurrentTensionForce: 0
+    IsLimitedByTension: 0
+    Constraint: {fileID: 0}
     RopeBindIndex: 0
     BindDistance: 0
     BindAxis: {x: 0, y: 0, z: 0}
@@ -2167,6 +2250,9 @@ MonoBehaviour:
     Fixed: 0
     HasCollision: 0
     PinToRigidbody: {fileID: 5001689395682355632}
+    CurrentTensionForce: 0
+    IsLimitedByTension: 0
+    Constraint: {fileID: 0}
     RopeBindIndex: 1
     BindDistance: 0
     BindAxis: {x: 0, y: 0, z: 0}
@@ -2245,3 +2331,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NorthStar.GrabAnchorHandsSetter
   m_grabLeftAnchor: {fileID: 230674045712953838}
   m_grabRightAnchor: {fileID: 1407665698867900537}
+  m_leftHandRef: {fileID: 7465462912361000647}
+  m_rightHandRef: {fileID: 5436287890974554919}
