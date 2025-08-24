@@ -1089,9 +1089,9 @@ namespace Meta.Utilities.Ropes
                             }
                             
                             // 計算した張力をプロパティに保存
-                            //anchor.CurrentTensionForce = Mathf.Abs(force);
+                            anchor.CurrentTensionForce = Mathf.Abs(force);
                             // 張力が閾値を超えているか判定し、フラグを更新
-                           // anchor.IsLimitedByTension = anchor.CurrentTensionForce > m_slipForce;
+                            anchor.IsLimitedByTension = anchor.CurrentTensionForce > 0;
 
                             // Slipping logic:
                             // When enough force (resistence to pulling the rope) is encountered, resolve in this order

@@ -2718,9 +2718,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d45e73e86ba4e09856e2e81ca6f1b50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NorthStar.XRInteractionHub.SyncXRInteractor
+  LocalMovementStrengthModifier: 1
+  LocalRotationStrengthModifier: 1
   syncGroup: {fileID: 4111979977736823773}
   anchor: {fileID: 2933411432497018485}
   physicsTransformer: {fileID: 3425800088471694256}
+  criticallyDampendSpringJoint: {fileID: 0}
 --- !u!54 &940332942
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4374,7 +4377,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7976260785470396523, guid: 6f13420218613c4419fb36257ecfbf9a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.79
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7976260785470396523, guid: 6f13420218613c4419fb36257ecfbf9a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4761,9 +4764,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d45e73e86ba4e09856e2e81ca6f1b50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NorthStar.XRInteractionHub.SyncXRInteractor
+  LocalMovementStrengthModifier: 1
+  LocalRotationStrengthModifier: 1
   syncGroup: {fileID: 1738613133701211907}
   anchor: {fileID: 6029879231690437162}
   physicsTransformer: {fileID: 6291396465314403294}
+  criticallyDampendSpringJoint: {fileID: 0}
 --- !u!1 &2142355879
 GameObject:
   m_ObjectHideFlags: 0
@@ -6189,6 +6195,7 @@ MonoBehaviour:
     PinToRigidbody: {fileID: 741040038}
     CurrentTensionForce: 0
     IsLimitedByTension: 0
+    Constraint: {fileID: 0}
     RopeBindIndex: 0
     BindDistance: 0
     BindAxis: {x: 0, y: 0, z: 0}
@@ -6204,6 +6211,7 @@ MonoBehaviour:
     PinToRigidbody: {fileID: 297425096}
     CurrentTensionForce: 0
     IsLimitedByTension: 0
+    Constraint: {fileID: 0}
     RopeBindIndex: 14
     BindDistance: 0
     BindAxis: {x: 0, y: 0, z: 0}

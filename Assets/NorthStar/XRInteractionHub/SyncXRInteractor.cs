@@ -34,15 +34,18 @@ namespace NorthStar.XRInteractionHub
         
         private IEnumerator Start()
         {
+            var handref = GetComponent<PhysicalHandRef>();
             this.syncGroup.selectEntered.AddListener((
                 arg0 =>
                 {
+                    handref.Hand.StartInteraction();
                     Grab(arg0.interactorObject);
                 }));
             
             this.syncGroup.selectExited.AddListener((
                 arg0 =>
                 {
+                    handref.Hand.EndInteraction();
                     Release(arg0.interactorObject);
                 }));
             this.rigidbody = GetComponent<Rigidbody>();
