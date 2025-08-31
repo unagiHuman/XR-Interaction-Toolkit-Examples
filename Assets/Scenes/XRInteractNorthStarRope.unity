@@ -2724,6 +2724,8 @@ MonoBehaviour:
   anchor: {fileID: 2933411432497018485}
   physicsTransformer: {fileID: 3425800088471694256}
   criticallyDampendSpringJoint: {fileID: 0}
+  parentRopeSystem: {fileID: 0}
+  maxJointPower: 0
 --- !u!54 &940332942
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4770,6 +4772,8 @@ MonoBehaviour:
   anchor: {fileID: 6029879231690437162}
   physicsTransformer: {fileID: 6291396465314403294}
   criticallyDampendSpringJoint: {fileID: 0}
+  parentRopeSystem: {fileID: 0}
+  maxJointPower: 0
 --- !u!1 &2142355879
 GameObject:
   m_ObjectHideFlags: 0

@@ -371,7 +371,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &574265614916764673
 Transform:
   m_ObjectHideFlags: 0
@@ -432,6 +432,8 @@ MonoBehaviour:
   anchor: {fileID: 230674045712953838}
   physicsTransformer: {fileID: 8314915406007673575}
   criticallyDampendSpringJoint: {fileID: 5909713129858405121}
+  parentRopeSystem: {fileID: 1696403202898111837}
+  maxJointPower: 100
 --- !u!114 &7465462912361000647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -994,6 +996,8 @@ MonoBehaviour:
   anchor: {fileID: 1407665698867900537}
   physicsTransformer: {fileID: 3910556922856241352}
   criticallyDampendSpringJoint: {fileID: 277716746247688865}
+  parentRopeSystem: {fileID: 1696403202898111837}
+  maxJointPower: 100
 --- !u!114 &5436287890974554919
 MonoBehaviour:
   m_ObjectHideFlags: 0

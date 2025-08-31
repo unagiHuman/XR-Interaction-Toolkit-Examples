@@ -33,8 +33,8 @@ namespace NorthStar
         
         public void SetBothPhysicalHand(PhysicalHand leftHand, PhysicalHand rightHand)
         {
-            m_leftHandRef.SetHand(leftHand);
-            m_rightHandRef.SetHand(rightHand);
+            m_leftHandRef?.SetHand(leftHand);
+            m_rightHandRef?.SetHand(rightHand);
         }
     }
 }

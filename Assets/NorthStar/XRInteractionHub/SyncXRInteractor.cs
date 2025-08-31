@@ -26,6 +26,10 @@ namespace NorthStar.XRInteractionHub
 
         [SerializeField] private CriticallyDampendSpringJoint criticallyDampendSpringJoint;
         
+        [SerializeField] RopeSystem parentRopeSystem;
+
+        [SerializeField] private float maxJointPower;
+        
         private Rigidbody rigidbody;
         
         private IXRInteractor interactor;
@@ -57,11 +61,31 @@ namespace NorthStar.XRInteractionHub
         private void FixedUpdate()
         {
             UpdateDrive();
+          
             if (this.ropeGrabAnchor != null)
             {
-                if (this.ropeGrabAnchor.IsLimitedByTension)
+                var isLimitedByTension = false;
+                if (this.parentRopeSystem.GetPrevAndNextAnchors(this.ropeGrabAnchor, out var prevAnchor,
+                        out var nextAnchor))
                 {
-                    SyncPositions(this.syncGroup.transform.position, this.syncGroup.transform.rotation);
+                    if (prevAnchor != null && nextAnchor != null)
+                    {
+                        isLimitedByTension = (IsMaxJointPower(prevAnchor) | IsMaxJointPower(nextAnchor));
+                    }
+                    else if (prevAnchor != null)
+                    {
+                        isLimitedByTension = IsMaxJointPower(prevAnchor);
+                    }
+                    else if (nextAnchor != null)
+                    {
+                        isLimitedByTension = IsMaxJointPower(nextAnchor);
+                    }
+                }
+                if (isLimitedByTension)
+                {
+                    Debug.Log("isLimitedByTension");
+                    //SyncPositions(this.syncGroup.transform.position, this.syncGroup.transform.rotation);
+                    SyncPositions(this.interactor.transform.position, this.interactor.transform.rotation);
                 }
                 else
                 {
@@ -72,6 +96,11 @@ namespace NorthStar.XRInteractionHub
             {
                 SyncPositions(this.syncGroup.transform.position, this.syncGroup.transform.rotation);
             }
+        }
+
+        private bool IsMaxJointPower(RopeSystem.Anchor anchor)
+        {
+            return anchor.CurrentTensionForce > this.maxJointPower;
         }
 
         private void Grab(IXRSelectInteractor interactor)
@@ -95,7 +124,12 @@ namespace NorthStar.XRInteractionHub
             this.ropeGrabAnchor = null;
             Debug.Log($"'{physicsTransformer.name}' を解放しました。");
         }
-        
+
+        /// <summary>
+        /// Synchronizes the position and rotation of the object with the specified target position and rotation values.
+        /// </summary>
+        /// <param name="targetPosition">The target position to synchronize to.</param>
+        /// <param name="targetRotation">The target rotation to synchronize to.</param>
         private void SyncPositions(Vector3 targetPosition, Quaternion targetRotation)
         {
             criticallyDampendSpringJoint.TargetPoint = targetPosition;
